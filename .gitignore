@@ -1,0 +1,9 @@
+go/awesome.so
+go/awesome.h
+awesome.so
+target/*
+
+.classpath
+.factorypath
+.project
+.settings
