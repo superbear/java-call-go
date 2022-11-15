@@ -19,5 +19,6 @@ make test
 ```
 
 ## References
+- [cgo](https://pkg.go.dev/cmd/cgo)
 - [call-go-function-from-java-demo](https://github.com/freewind-demos/call-go-function-from-java-demo)
 - [go-cshared-examples](https://github.com/vladimirvivien/go-cshared-examples)

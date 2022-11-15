@@ -1,3 +1,3 @@
-module github.com/superbear/hive-udf/go
+module github.com/superbear/java-call-go/go
 
 go 1.15
