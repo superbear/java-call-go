@@ -31,12 +31,12 @@ jobs:
       - id: cache
         uses: actions/cache@v3
         with:
-          path: dist/${{ matrix.os }}
-          key: ${{ matrix.os }}-${{ env.sha_short }}
+          path: go/dist/${{ runner.os }}
+          key: ${{ runner.os }}-${{ env.sha_short }}
 
       - name: Build c-shared library
         run: |
-          cd go && go build -o dist/${{ matrix.os }}/awesome.so -buildmode=c-shared awesome.go
+          cd go && go build -o dist/${{ runner.os }}/awesome.so -buildmode=c-shared awesome.go
 
   release:
     runs-on: ubuntu-latest
@@ -46,6 +46,7 @@ jobs:
       - shell: bash
         run: |
           echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
       - uses: actions/cache@v3
         with:
           path: dist/linux
@@ -61,7 +62,7 @@ jobs:
 
       - name: list cache
         run:
-          ls -l dist
+          ls -l go/dist/*
 
   # release:
   #   runs-on: ubuntu-latest
