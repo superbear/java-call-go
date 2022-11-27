@@ -33,8 +33,6 @@ jobs:
         with:
           path: dist/${{ runner.os }}
           key: ${{ runner.os }}-${{ env.sha_short }}
-          restore-keys: |
-            ${{ runner.os }}-${{ env.sha_short }}
 
       - name: Build c-shared library
         run: |
@@ -64,16 +62,10 @@ jobs:
 
       - uses: actions/cache@v3
         with:
-          path: dist/Linux
-          key: Linux-${{ env.sha_short }}
-      - uses: actions/cache@v3
-        with:
-          path: dist/macOS
-          key: macOS-${{ env.sha_short }}
-      - uses: actions/cache@v3
-        with:
-          path: dist/Windows
-          key: Windows-${{ env.sha_short }}
+          restore-keys: |
+            Linux-${{ env.sha_short }}
+            macOS-${{ env.sha_short }}
+            Windows-${{ env.sha_short }}
 
       - name: Publish to GitHub Packages Apache Maven
         env:
