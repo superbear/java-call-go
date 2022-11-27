@@ -82,4 +82,4 @@ jobs:
           cp dist/macOS/awesome.so src/main/resources/darwin-x86-64/libawesome.dylib
           # cp dist/Windows/awesome.so src/main/resources/win32-x86-64/awesome.dll
 
-          make deploy
+          mvn -B deploy
