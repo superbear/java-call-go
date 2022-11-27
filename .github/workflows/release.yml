@@ -80,6 +80,6 @@ jobs:
         run: |
           cp dist/Linux/awesome.so src/main/resources/linux-x86-64/libawesome.so
           cp dist/macOS/awesome.so src/main/resources/darwin-x86-64/libawesome.dylib
-          # cp dist/Windows/awesome.so src/main/resources/win32-x86-64/awesome.dll
+          cp dist/Windows/awesome.so src/main/resources/win32-x86-64/awesome.dll
 
           mvn -B deploy
