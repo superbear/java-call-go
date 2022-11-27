@@ -29,18 +29,8 @@ build: ## build jar
 	make build-go
 	mvn clean package assembly:single
 
-deploy: ## deploy
-	cd go && $(GO) build -o libawesome.so -buildmode=c-shared awesome.go
-	cd go && CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 $(GO) build -o libawesome.dylib -buildmode=c-shared awesome.go
-	cd go && CGO_ENABLED=1 GOOS=windows GOARCH=amd64 $(GO) build -o libawesome.dll -buildmode=c-shared awesome.go
-	cp go/libawesome.so src/main/resources/linux-x86-64/
-	cp go/libawesome.dylib src/main/resources/darwin-x86-64/
-	cp go/awesome.dll src/main/resources/win32-x86-64/
-	mvn deploy
-
 test: ## test
 	make build-go
-	rm -f awesome.so
 	mvn clean test -Djna.debug_load=true
 
 clean: ## go clean && rm build output
