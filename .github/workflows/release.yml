@@ -62,10 +62,18 @@ jobs:
 
       - uses: actions/cache@v3
         with:
-          restore-keys: |
-            Linux-${{ env.sha_short }}
-            macOS-${{ env.sha_short }}
-            Windows-${{ env.sha_short }}
+          path: dist/Linux
+          key: Linux-${{ env.sha_short }}
+      - uses: actions/cache@v3
+        with:
+          path: dist/macOS
+          key: macOS-${{ env.sha_short }}
+      - uses: actions/cache@v3
+        with:
+          path: dist/Windows
+          key: Windows-${{ env.sha_short }}
+        run: |
+          cp dist/Windows/awesome.so src/main/resources/win32-x86-64/awesome.dll
 
       - name: Publish to GitHub Packages Apache Maven
         env:
@@ -74,6 +82,5 @@ jobs:
         run: |
           cp dist/Linux/awesome.so src/main/resources/linux-x86-64/libawesome.so
           cp dist/macOS/awesome.so src/main/resources/darwin-x86-64/libawesome.dylib
-          cp dist/Windows/awesome.so src/main/resources/win32-x86-64/awesome.dll
 
           make deploy
