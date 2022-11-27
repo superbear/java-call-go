@@ -31,7 +31,7 @@ build: ## build jar
 
 deploy: ## deploy
 	cd go && $(GO) build -o libawesome.so -buildmode=c-shared awesome.go
-	cd go && CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 $(GO) build -o libawesome.dylib -buildmode=c-shared awesome.go
+	cd go && GOOS=darwin GOARCH=amd64 $(GO) build -o libawesome.dylib -buildmode=c-shared awesome.go
 	cd go && CGO_ENABLED=1 GOOS=windows GOARCH=amd64 $(GO) build -o libawesome.dll -buildmode=c-shared awesome.go
 	cp go/libawesome.so src/main/resources/linux-x86-64/
 	cp go/libawesome.dylib src/main/resources/darwin-x86-64/
