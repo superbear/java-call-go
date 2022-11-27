@@ -4,30 +4,88 @@ on:
   push:
     branches:
       - main
+    pull_request:
 
 jobs:
-  release:
-    runs-on: ubuntu-latest
-
+  prepare:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          submodules: true
+          fetch-depth: 0
 
       - name: Setup Go
         uses: actions/setup-go@v3.3.0
         with:
-          go-version: 1.16
+          go-version-file: 'go/go.mod'
+          cache: true
 
-      - name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: 8
-          cache: 'maven'
-
-      - name: Publish to GitHub Packages Apache Maven
-        env:
-          GITHUB_USERNAME: ${{ secrets.GITHUB_USERNAME }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - shell: bash
         run: |
-          make deploy
+          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+      - id: cache
+        uses: actions/cache@v3
+        with:
+          path: dist/${{ matrix.GOOS }}
+          key: ${{ matrix.GOOS }}-${{ env.sha_short }}
+
+      - name: Build c-shared library
+        run: |
+          cd go && go build -o dist/${{ matrix.GOOS }}/libawesome.so -buildmode=c-shared awesome.go
+
+  release:
+    runs-on: ubuntu-latest
+    needs: prepare
+    steps:
+      # copy the cashes from prepare
+      - shell: bash
+        run: |
+          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+      - uses: actions/cache@v3
+        with:
+          path: dist/linux
+          key: linux-${{ env.sha_short }}
+      - uses: actions/cache@v3
+        with:
+          path: dist/darwin
+          key: darwin-${{ env.sha_short }}
+      - uses: actions/cache@v3
+        with:
+          path: dist/windows
+          key: windows-${{ env.sha_short }}
+
+      - name: list cache
+        run:
+          ls -l dist
+
+  # release:
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
+
+  #     - name: Setup Go
+  #       uses: actions/setup-go@v3.3.0
+  #       with:
+  #         go-version: 1.16
+
+  #     - name: Setup Java
+  #       uses: actions/setup-java@v3
+  #       with:
+  #         distribution: 'temurin'
+  #         java-version: 8
+  #         cache: 'maven'
+
+  #     - name: Publish to GitHub Packages Apache Maven
+  #       env:
+  #         GITHUB_USERNAME: ${{ secrets.GITHUB_USERNAME }}
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       run: |
+  #         make deploy
