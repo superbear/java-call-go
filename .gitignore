@@ -1,7 +1,8 @@
-go/awesome.so
-go/awesome.h
+go/libawesome.so
+go/libawesome.dylib
+go/awesome.dll
+go/*.h
 libawesome.*
-awesome.so
 target/*
 
 .classpath
