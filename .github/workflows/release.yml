@@ -31,12 +31,12 @@ jobs:
       - id: cache
         uses: actions/cache@v3
         with:
-          path: dist/${{ matrix.GOOS }}
-          key: ${{ matrix.GOOS }}-${{ env.sha_short }}
+          path: dist/${{ matrix.os }}
+          key: ${{ matrix.os }}-${{ env.sha_short }}
 
       - name: Build c-shared library
         run: |
-          cd go && go build -o dist/${{ matrix.GOOS }}/libawesome.so -buildmode=c-shared awesome.go
+          cd go && go build -o dist/${{ matrix.os }}/awesome.so -buildmode=c-shared awesome.go
 
   release:
     runs-on: ubuntu-latest
