@@ -31,12 +31,12 @@ jobs:
       - id: cache
         uses: actions/cache@v3
         with:
-          path: go/dist/${{ runner.os }}
+          path: dist/${{ runner.os }}
           key: ${{ runner.os }}-${{ env.sha_short }}
 
       - name: Build c-shared library
         run: |
-          cd go && go build -o dist/${{ runner.os }}/awesome.so -buildmode=c-shared awesome.go
+          cd go && go build -o ../dist/${{ runner.os }}/awesome.so -buildmode=c-shared awesome.go
 
   release:
     runs-on: ubuntu-latest
@@ -48,6 +48,13 @@ jobs:
           submodules: true
           fetch-depth: 0
 
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: 8
+          cache: 'maven'
+
       # copy the cashes from prepare
       - shell: bash
         run: |
@@ -55,43 +62,24 @@ jobs:
 
       - uses: actions/cache@v3
         with:
-          path: go/dist/Linux
+          path: dist/Linux
           key: Linux-${{ env.sha_short }}
       - uses: actions/cache@v3
         with:
-          path: go/dist/macOS
+          path: dist/macOS
           key: macOS-${{ env.sha_short }}
       - uses: actions/cache@v3
         with:
-          path: go/dist/Windows
+          path: dist/Windows
           key: Windows-${{ env.sha_short }}
 
-      - name: list cache
-        run:
-          ls -l go/dist/*
+      - name: Publish to GitHub Packages Apache Maven
+        env:
+          GITHUB_USERNAME: ${{ secrets.GITHUB_USERNAME }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cp dist/Linux/awesome.so src/main/resources/linux-x86-64/libawesome.so
+          cp dist/macOS/awesome.so src/main/resources/darwin-x86-64/libawesome.dylib
+          cp dist/Windows/awesome.so src/main/resources/win32-x86-64/awesome.dll
 
-  # release:
-  #   runs-on: ubuntu-latest
-
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
-
-  #     - name: Setup Go
-  #       uses: actions/setup-go@v3.3.0
-  #       with:
-  #         go-version: 1.16
-
-  #     - name: Setup Java
-  #       uses: actions/setup-java@v3
-  #       with:
-  #         distribution: 'temurin'
-  #         java-version: 8
-  #         cache: 'maven'
-
-  #     - name: Publish to GitHub Packages Apache Maven
-  #       env:
-  #         GITHUB_USERNAME: ${{ secrets.GITHUB_USERNAME }}
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #       run: |
-  #         make deploy
+          make deploy
