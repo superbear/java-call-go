@@ -38,6 +38,12 @@ jobs:
         run: |
           cd go && go build -o ../dist/${{ runner.os }}/awesome.so -buildmode=c-shared awesome.go
 
+      - name: Upload
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ runner.os }}-${{ env.sha_short }}
+          path: dist/${{ runner.os }}
+
   release:
     runs-on: ubuntu-latest
     needs: prepare
@@ -68,18 +74,41 @@ jobs:
         with:
           path: dist/macOS
           key: macOS-${{ env.sha_short }}
+      # https://github.com/actions/cache#cache-version
       - uses: actions/cache@v3
         with:
           path: dist/Windows
           key: Windows-${{ env.sha_short }}
+
+      - name: Make directories
+        run: |
+          mkdir -p ./dist/linux
+          mkdir -p ./dist/darwin
+          mkdir -p ./dist/windows
+      - name: Download linux binaries
+        uses: actions/download-artifact@v3
+        with:
+          name: Linux-${{ env.sha_short }}
+          path: ./dist/linux
+      - name: Download darwin binaries
+        uses: actions/download-artifact@v3
+        with:
+          name: macOS-${{ env.sha_short }}
+          path: ./dist/darwin
+      - name: Download windows binaries
+        uses: actions/download-artifact@v3
+        with:
+          name: Windows-${{ env.sha_short }}
+          path: ./dist/windows
 
       - name: Publish to GitHub Packages Apache Maven
         env:
           GITHUB_USERNAME: ${{ secrets.GITHUB_USERNAME }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          cp dist/Linux/awesome.so src/main/resources/linux-x86-64/libawesome.so
-          cp dist/macOS/awesome.so src/main/resources/darwin-x86-64/libawesome.dylib
-          cp dist/Windows/awesome.so src/main/resources/win32-x86-64/awesome.dll
+          ls -l dist/*
+          # cp dist/Linux/awesome.so src/main/resources/linux-x86-64/libawesome.so
+          # cp dist/macOS/awesome.so src/main/resources/darwin-x86-64/libawesome.dylib
+          # cp dist/Windows/awesome.so src/main/resources/win32-x86-64/awesome.dll
 
-          mvn -B deploy
+          # mvn -B deploy
