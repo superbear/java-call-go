@@ -62,12 +62,11 @@ jobs:
 
       - name: Make directories
         run: |
-          mkdir -p ./dist/{linux, darwin, windows}
+          mkdir -p ./dist/{linux,darwin,windows}
       - name: Download linux binaries
         uses: actions/download-artifact@v3
         with:
           name: sha-${{ env.sha_short }}
-          path: ./dist/linux
 
       - name: Publish to GitHub Packages Apache Maven
         env:
