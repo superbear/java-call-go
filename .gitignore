@@ -1,5 +1,6 @@
 go/awesome.so
 go/awesome.h
+libawesome.*
 awesome.so
 target/*
 

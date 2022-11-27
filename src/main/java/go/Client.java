@@ -11,7 +11,7 @@ public class Client {
 
     static {
         try {
-            File file = Native.extractFromResourcePath("/awesome.so", Client.class.getClassLoader());
+            File file = Native.extractFromResourcePath("awesome", Client.class.getClassLoader());
             Awesome lib = Native.load(file.getAbsolutePath(), Awesome.class);
             handle = (Awesome)Native.synchronizedLibrary(lib);
         } catch (Exception e) {
