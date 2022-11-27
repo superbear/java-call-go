@@ -31,7 +31,6 @@ build: ## build jar
 
 test: ## test
 	make build-go
-	rm -f awesome.so
 	mvn clean test -Djna.debug_load=true
 
 clean: ## go clean && rm build output
