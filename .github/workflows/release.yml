@@ -33,6 +33,8 @@ jobs:
         with:
           path: dist/${{ runner.os }}
           key: ${{ runner.os }}-${{ env.sha_short }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.sha_short }}
 
       - name: Build c-shared library
         run: |
