@@ -22,7 +22,7 @@ endif
 export GO111MODULE := on
 
 build-go: ## build go shared library
-	cd go && $(GO) build -o $(NATIVE_LIB) -buildmode=c-shared awesome.go
+	cd go && $(GO) build -ldflags="-w -s" -o $(NATIVE_LIB) -buildmode=c-shared awesome.go
 	cp go/$(NATIVE_LIB) src/main/resources/$(OS_NAME)-x86-64
 
 build: ## build jar
